@@ -3,7 +3,7 @@
     "author": "Junie",
     "description": "Calls a website/API or local script and changes button state based on result.",
     "version": "1.0.0",
-    "repository": "https://github.com/StreamController/StreamControllerStatusPlugin",
+    "repository": "https://github.com/bgrande/StreamControllerStatusPlugin",
     "website": "https://streamcontroller.core447.com",
     "main": "main.py",
     "icon": "icon.png",
