@@ -3,7 +3,7 @@
     "author": "Junie",
     "description": "Calls a website/API or local script and changes button state based on result.",
     "version": "1.0.0",
-    "repository": "https://github.com/bgrande/StreamControllerStatusPlugin",
+    "repository": "https://github.com/StreamController/StreamControllerStatusPlugin",
     "website": "https://streamcontroller.core447.com",
     "main": "main.py",
     "icon": "icon.png",
@@ -11,8 +11,8 @@
     "actions": [
         {
             "name": "Status Checker",
-            "id": "status_checker",
-            "main": "actions.py"
+            "id": "com.junie.StatusPlugin::StatusChecker",
+            "main": "actions/StatusAction.py"
         }
     ]
 }
