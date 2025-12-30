@@ -4,32 +4,30 @@ import threading
 import time
 import urllib.request
 import urllib.error
-from typing import Optional
+import base64
 
-from src.backend.PluginManager.ActionCore import ActionCore
-from src.backend.PluginManager.InputBases import KeyAction
+from src.backend.DeckManagement.DeckController import DeckController
+from src.backend.PageManagement.Page import Page
+from src.backend.PluginManager.ActionBase import ActionBase
+from src.backend.PluginManager.PluginBase import PluginBase
 
-from GtkHelper.GenerativeUI.EntryRow import EntryRow
-from GtkHelper.GenerativeUI.SpinRow import SpinRow
-from GtkHelper.GenerativeUI.ComboRow import ComboRow
-from GtkHelper.GenerativeUI.ColorButtonRow import ColorButtonRow
-from GtkHelper.GenerativeUI.FileDialogRow import FileDialogRow
-from GtkHelper.GenerativeUI.ExpanderRow import ExpanderRow
-from GtkHelper.GenerativeUI.SwitchRow import SwitchRow
+# Import gtk modules
+import gi
+gi.require_version("Gtk", "4.0")
+gi.require_version("Adw", "1")
+from gi.repository import Gtk, Adw
 
-class StatusAction(KeyAction):
+class StatusAction(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.has_configuration = True
         
-        self.settings = self.get_settings()
-        
         # Initialize default settings if not present
         defaults = {
-            "check_type": "API/Website",
+            "type": "web", # web, local
             "target": "https://google.com",
             "interval": 60,
-            "periodic_enabled": True,
+            "interval_enabled": True,
             "match_value": "200",
             "match_mode": "Status Code",
             "match_bg_color": [0, 255, 0, 255],
@@ -39,13 +37,21 @@ class StatusAction(KeyAction):
             "nomatch_bg_color": [255, 0, 0, 255],
             "nomatch_text_color": [255, 255, 255, 255],
             "nomatch_label": "Offline",
-            "nomatch_image": ""
+            "nomatch_image": "",
+            "username": "",
+            "password": "",
+            "return_type": "background_color", # background_color, text, text_color, background_image
+            "return_handler": ""
         }
-        
+
+        settings = self.get_settings()
+
         for key, value in defaults.items():
-            if key not in self.settings:
-                self.settings[key] = value
-        
+            if key not in settings:
+                settings[key] = value
+
+        self.set_settings(settings)
+
         self.last_check_time = 0
         self.is_checking = False
 
@@ -53,7 +59,7 @@ class StatusAction(KeyAction):
         self.perform_check_async()
 
     def on_tick(self):
-        if not self.settings.get("periodic_enabled", False):
+        if not self.settings.get("interval_enabled", False):
             return
             
         interval = self.settings.get("interval", 60)
@@ -77,18 +83,23 @@ class StatusAction(KeyAction):
     def perform_check(self):
         self.is_checking = True
         self.last_check_time = time.time()
-        
-        check_type = self.settings.get("check_type", "API/Website")
-        target = self.settings.get("target", "")
+
+        settings = self.get_settings()
+        command_type = settings.get("type", "web")
+        target = settings.get("target", "")
+        username = settings.get("username", "")
+        password = settings.get("password", "")
         
         result = ""
         success = False
         status_code = -1
         
         try:
-            if check_type == "API/Website":
+            if command_type == "web":
                 try:
-                    with urllib.request.urlopen(target, timeout=10) as response:
+                    base64string = base64.b64encode(bytes('%s:%s' % (username, password), 'utf-8'))
+                    request = urllib.request.Request(target, headers={'User-Agent': 'Mozilla/5.0', 'Authorization': "Basic %s" % base64string})
+                    with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
                         success = True
@@ -130,66 +141,47 @@ class StatusAction(KeyAction):
             except:
                 is_match = False
             
-        self.update_ui(is_match)
+        self.update_ui(is_match, result)
 
-    def update_ui(self, is_match: bool):
+    def update_ui(self, is_match: bool, result: str):
         prefix = "match_" if is_match else "nomatch_"
-        
-        bg_color = self.settings.get(f"{prefix}bg_color", [0, 0, 0, 255])
-        text_color = self.settings.get(f"{prefix}text_color", [255, 255, 255, 255])
-        label = self.settings.get(f"{prefix}label", "")
-        image_path = self.settings.get(f"{prefix}image", "")
-        
-        self.set_background_color(bg_color)
-        self.set_center_label(label, color=text_color)
-        
-        if image_path and os.path.exists(image_path):
-            self.set_media(media_path=image_path)
-        else:
-            self.set_media(None)
 
-    def get_config_rows(self) -> list:
-        # Check Config
-        self.type_combo = ComboRow(self, "check_type", self.settings["check_type"], ["API/Website", "Local Script"], title="Check Type")
-        self.target_entry = EntryRow(self, "target", self.settings["target"], title="Target (URL or Path)")
-        self.periodic_switch = SwitchRow(self, "periodic_enabled", self.settings["periodic_enabled"], title="Periodic Check")
-        self.interval_spin = SpinRow(self, "interval", self.settings["interval"], 1, 3600, title="Interval (seconds)")
-        
-        # Match Config
-        self.match_mode_combo = ComboRow(self, "match_mode", self.settings["match_mode"], ["Status Code", "Contains", "Equals", "Success", "Regex"], title="Match Mode")
-        self.match_value_entry = EntryRow(self, "match_value", self.settings["match_value"], title="Match Value")
-        
-        # Match Behavior
-        self.match_expander = ExpanderRow(self, "match_expander", True, title="Match Behavior", start_expanded=False)
-        self.match_bg_color = ColorButtonRow(self, "match_bg_color", self.settings["match_bg_color"], title="Background Color")
-        self.match_text_color = ColorButtonRow(self, "match_text_color", self.settings["match_text_color"], title="Text Color")
-        self.match_label_entry = EntryRow(self, "match_label", self.settings["match_label"], title="Label")
-        self.match_image_file = FileDialogRow(self, "match_image", self.settings["match_image"], title="Image")
-        
-        self.match_expander.add_row(self.match_bg_color.widget)
-        self.match_expander.add_row(self.match_text_color.widget)
-        self.match_expander.add_row(self.match_label_entry.widget)
-        self.match_expander.add_row(self.match_image_file.widget)
-        
-        # No Match Behavior
-        self.nomatch_expander = ExpanderRow(self, "nomatch_expander", True, title="No Match Behavior", start_expanded=False)
-        self.nomatch_bg_color = ColorButtonRow(self, "nomatch_bg_color", self.settings["nomatch_bg_color"], title="Background Color")
-        self.nomatch_text_color = ColorButtonRow(self, "nomatch_text_color", self.settings["nomatch_text_color"], title="Text Color")
-        self.nomatch_label_entry = EntryRow(self, "nomatch_label", self.settings["nomatch_label"], title="Label")
-        self.nomatch_image_file = FileDialogRow(self, "nomatch_image", self.settings["nomatch_image"], title="Image")
-        
-        self.nomatch_expander.add_row(self.nomatch_bg_color.widget)
-        self.nomatch_expander.add_row(self.nomatch_text_color.widget)
-        self.nomatch_expander.add_row(self.nomatch_label_entry.widget)
-        self.nomatch_expander.add_row(self.nomatch_image_file.widget)
-        
-        return [
-            self.type_combo.widget,
-            self.target_entry.widget,
-            self.periodic_switch.widget,
-            self.interval_spin.widget,
-            self.match_mode_combo.widget,
-            self.match_value_entry.widget,
-            self.match_expander.widget,
-            self.nomatch_expander.widget
-        ]
+        settings = self.get_settings()
+
+        bg_color = settings.get(f"{prefix}bg_color", [0, 0, 0, 255])
+        text_color = settings.get(f"{prefix}text_color", [255, 255, 255, 255])
+        label = settings.get(f"{prefix}label", "")
+        image_path = settings.get(f"{prefix}image", "")
+        return_type = settings.get("return_type", "")
+
+        if return_type == "string":
+            self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
+        elif return_type == "background_color":
+            self.set_background_color(bg_color)
+        elif return_type == "background_image":
+            # todo: set background image: set_media(self, image = None, media_path=None, size: float = None, valign: float = None, halign: float = None, fps: int = 30, loop: bool = True, update: bool = True):
+            if image_path and os.path.exists(image_path):
+                # this needs to copy the image somewhere, first, probably better use image=image_file (from request)
+                self.set_media(media_path=image_path)
+            else:
+                self.set_media(None)
+
+    def get_config_rows(self):
+        entry_row = Adw.EntryRow(title=self.plugin_base.lm.get("open-browser.url.title"))
+        new_window_toggle = Adw.SwitchRow(title=self.plugin_base.lm.get("open-browser.new-window"))
+
+        # Load from config
+        settings = self.get_settings()
+        url = settings.setdefault("url", None)
+        if url is None:
+            url = ""
+        entry_row.set_text(url)
+        new_window_toggle.set_active(settings.setdefault("new_window", False))
+        self.set_settings(settings)
+
+        # Connect entry
+        entry_row.connect("notify::text", self.on_change_url)
+        # Connect switch
+        new_window_toggle.connect("notify::active", self.on_change_new_window)
+
+        return [entry_row]
