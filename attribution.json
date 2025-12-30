@@ -1,0 +1,9 @@
+{
+    "generic": {
+        "copyright": "Benedikt Grande",
+        "original-url": "https://github.com/bgrande/StreamControllerStatusPlugin",
+        "license": "GPLv3",
+        "license-url": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "description": "StreamController Status Plugin"
+    }
+}
