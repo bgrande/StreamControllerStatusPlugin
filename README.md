@@ -54,4 +54,4 @@ Expand these sections to define how the button should look when the condition is
 This plugin is developed for use with [StreamController](https://github.com/StreamController/StreamController).
 
 ---
-*Developed by Junie.*
+*Initial draft by Junie.*
