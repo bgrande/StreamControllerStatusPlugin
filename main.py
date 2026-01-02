@@ -8,19 +8,27 @@ from .actions import StatusAction
 class StatusPlugin(PluginBase):
     def __init__(self):
         super().__init__()
+
         ## Register actions
         self.status_checker_holder = ActionHolder(
             plugin_base = self,
             action_base = StatusAction,
-            action_id = "com.junie.StatusPlugin::StatusChecker",
+            action_id_suffix = "StatusChecker",
+            action_id = "com.bgrande.StatusPlugin::StatusChecker",
             action_name = "Status Checker",
+            # icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
+            action_support={
+                Input.Key: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNTESTED
+            }
         )
         self.add_action_holder(self.status_checker_holder)
 
         # Register plugin
         self.register(
-            plugin_name = "Status Plugin",
-            github_repo = "https://github.com/StreamController/StreamControllerStatusPlugin",
-            plugin_version = "1.0.0",
-            app_version = "1.1.1-alpha"
+            plugin_name = self.lm.get("plugin.name"),
+            github_repo = self.lm.get("plugin.github"),
+            plugin_version = self.lm.get("plugin.version"),
+            app_version = self.lm.get("app-version")
         )
