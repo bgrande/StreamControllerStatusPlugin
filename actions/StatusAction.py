@@ -52,7 +52,7 @@ class StatusAction(ActionBase):
         self.settings = self.get_settings()
 
         for key, value in defaults.items():
-            if key not in settings:
+            if key not in self.settings:
                 self.settings[key] = value;
 
         self.set_settings(self.settings)
