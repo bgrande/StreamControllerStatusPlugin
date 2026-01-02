@@ -28,9 +28,4 @@ class StatusPlugin(PluginBase):
         self.add_action_holder(self.status_checker_holder)
 
         # Register plugin
-        self.register(
-            plugin_name = self.lm.get("plugin.name"),
-            github_repo = self.lm.get("plugin.github"),
-            plugin_version = self.lm.get("plugin.version"),
-            app_version = self.lm.get("app-version")
-        )
+        self.register()
