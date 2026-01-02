@@ -23,9 +23,13 @@ class StatusAction(ActionBase):
 
         self.has_configuration = True
         
+        self.last_check_time = 0
+        self.is_checking = False
+
+    def on_ready(self):
         # Initialize default settings if not present
         defaults = {
-            "type": "web", # web, local
+            "type": "web",  # web, local
             "target": "https://google.com",
             "interval": 0,
             "match_value": "200",
@@ -40,7 +44,7 @@ class StatusAction(ActionBase):
             "nomatch_image": "",
             "username": "",
             "password": "",
-            "return_type": "background_color", # background_color, text, text_color, background_image
+            "return_type": "background_color",  # background_color, text, text_color, background_image
             "return_handler": "",
             "headers": "{}",
         }
@@ -51,16 +55,10 @@ class StatusAction(ActionBase):
             if key not in settings:
                 self.settings.setdefault(key, "")
 
-        self.last_check_time = 0
-        self.is_checking = False
-
-    def on_ready(self):
-        self.perform_check_async()
+        #self.perform_check_async()
 
     def on_tick(self):
-        settings = self.get_settings()
-
-        interval = settings["interval"]
+        interval = self.s["interval"]
         if interval <= 0:
             return
             
