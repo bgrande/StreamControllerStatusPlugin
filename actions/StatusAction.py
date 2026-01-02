@@ -53,7 +53,7 @@ class StatusAction(ActionBase):
 
         for key, value in defaults.items():
             if key not in settings:
-                self.settings.setdefault(key, value)
+                self.settings[key] = value;
 
         self.set_settings(self.settings)
 
