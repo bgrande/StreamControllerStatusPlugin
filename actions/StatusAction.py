@@ -179,7 +179,7 @@ class StatusAction(ActionBase):
         self.auto_fetch = Adw.SpinRow.new_with_range(step=1, min=0, max=3600)
         self.auto_fetch.set_title("Auto Fetch (s)")
         self.auto_fetch.set_subtitle("0 to disable")
-        self.match_bg_color = Adw.ColorButton(title="Match Background Color")
+        #self.match_bg_color = Adw.ColorButton(title="Match Background Color")
 
         self.load_config_defaults()
 
@@ -187,9 +187,9 @@ class StatusAction(ActionBase):
         self.target_entry.connect("notify::text", self.on_target_changed)
         self.headers_entry.connect("notify::text", self.on_headers_changed)
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
-        self.match_bg_color.connect("notify::rgba", self.on_match_bg_changed)
+        #self.match_bg_color.connect("notify::rgba", self.on_match_bg_changed)
 
-        return [self.target_entry, self.headers_entry, self.auto_fetch, self.match_bg_color]
+        return [self.target_entry, self.headers_entry, self.auto_fetch]
 
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, "target")

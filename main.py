@@ -29,3 +29,10 @@ class StatusPlugin(PluginBase):
 
         # Register plugin
         self.register()
+
+    #def init_locale_manager(self):
+    #    self.lm = self.locale_manager
+    #    self.lm.set_to_os_default()
+
+    def get_selector_icon(self) -> Gtk.Widget:
+        return Gtk.Image(icon_name="network-transmit-receive")
