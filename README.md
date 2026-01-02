@@ -25,7 +25,7 @@ The **Status Plugin** for StreamController allows you to monitor the status of w
 Add the **Status Checker** action to a button and configure the following settings:
 
 ### Check Settings
-- **Check Type**: Choose between `API/Website` or `Local Script`.
+- **Type**: Choose between `web` or `local`.
 - **Target**: Enter the URL (for API/Website) or the full path/command (for Local Script).
 - **Periodic Check**: Enable to run the check automatically.
 - **Interval (seconds)**: Set how often the periodic check should run.
@@ -42,7 +42,6 @@ Expand these sections to define how the button should look when the condition is
 - **Image**: An optional image to display on the button.
 
 ## Usage
-
 1. Install the plugin into StreamController.
 2. Drag the **Status Checker** action onto a button.
 3. Configure your target (e.g., `https://api.github.com`).

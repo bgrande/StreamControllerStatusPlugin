@@ -1,4 +1,5 @@
 {
+    "id": "com_bgrande_status-plugin",
     "name": "Status Plugin",
     "author": "Benedikt Grande",
     "description": "Calls a website/API or local script and changes button state based on result",
