@@ -53,7 +53,7 @@ class StatusAction(ActionBase):
 
         for key, value in defaults.items():
             if key not in settings:
-                self.settings.setdefault(key, "")
+                self.settings.setdefault(key, value)
 
         self.set_settings(self.settings)
 
@@ -172,7 +172,7 @@ class StatusAction(ActionBase):
         self.headers_entry.set_text(settings.get("headers", "{}"))
         self.auto_fetch.set_value(settings.get("interval", 0))
 
-    def get_config_rows(self):
+    def get_config_rows(self) -> list:
         self.target_entry = Adw.EntryRow(title="URL (i.e. https://google.com) or application path (i.e. /usr/bin/myscript)")
         self.headers_entry = Adw.EntryRow(title="Header (json)")
         self.auto_fetch = Adw.SpinRow.new_with_range(step=1, min=0, max=3600)
