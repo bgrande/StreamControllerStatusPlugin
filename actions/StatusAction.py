@@ -55,6 +55,8 @@ class StatusAction(ActionBase):
             if key not in settings:
                 self.settings.setdefault(key, "")
 
+        self.set_settings(self.settings)
+
         #self.perform_check_async()
 
     def on_tick(self):
