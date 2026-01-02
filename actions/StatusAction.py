@@ -15,7 +15,7 @@ from src.backend.PluginManager.PluginBase import PluginBase
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw
+from gi.repository import Gtk, Adw, Gio
 
 class StatusAction(ActionBase):
     def __init__(self, *args, **kwargs):
@@ -26,8 +26,7 @@ class StatusAction(ActionBase):
         defaults = {
             "type": "web", # web, local
             "target": "https://google.com",
-            "interval": 60,
-            "interval_enabled": True,
+            "interval": 0,
             "match_value": "200",
             "match_mode": "Status Code",
             "match_bg_color": [0, 255, 0, 255],
@@ -41,7 +40,8 @@ class StatusAction(ActionBase):
             "username": "",
             "password": "",
             "return_type": "background_color", # background_color, text, text_color, background_image
-            "return_handler": ""
+            "return_handler": "",
+            "headers": "{}",
         }
 
         settings = self.get_settings()
@@ -59,7 +59,7 @@ class StatusAction(ActionBase):
         self.perform_check_async()
 
     def on_tick(self):
-        if not self.settings.get("interval_enabled", False):
+        if self.settings.get("interval", 0):
             return
             
         interval = self.settings.get("interval", 60)
@@ -125,7 +125,8 @@ class StatusAction(ActionBase):
         match_value = self.settings.get("match_value", "")
         
         is_match = False
-        
+
+        # todo: the following has to be rethought and redone!
         if match_mode == "Status Code":
             is_match = str(status_code) == match_value
         elif match_mode == "Contains":
@@ -166,22 +167,47 @@ class StatusAction(ActionBase):
             else:
                 self.set_media(None)
 
-    def get_config_rows(self):
-        entry_row = Adw.EntryRow(title=self.plugin_base.lm.get("open-browser.url.title"))
-        new_window_toggle = Adw.SwitchRow(title=self.plugin_base.lm.get("open-browser.new-window"))
-
-        # Load from config
+    def load_config_defaults(self):
         settings = self.get_settings()
-        url = settings.setdefault("url", None)
-        if url is None:
-            url = ""
-        entry_row.set_text(url)
-        new_window_toggle.set_active(settings.setdefault("new_window", False))
+        self.target_entry.set_text(settings.get("target", ""))  # Does not accept None
+        self.headers_entry.set_text(settings.get("headers", "{}"))
+        self.auto_fetch.set_value(settings.get("interval", 0))
+
+    def get_config_rows(self):
+        self.target_entry = Adw.EntryRow(title="URL (i.e. https://google.com) or application path (i.e. /usr/bin/myscript)")
+        self.headers_entry = Adw.EntryRow(title="Header (json)")
+        self.auto_fetch = Adw.SpinRow.new_with_range(step=1, min=0, max=3600)
+        self.auto_fetch.set_title("Auto Fetch (s)")
+        self.auto_fetch.set_subtitle("0 to disable")
+        self.match_bg_color = Adw.ColorButton(title="Match Background Color")
+
+        self.load_config_defaults()
+
+        # Connect signals
+        self.target_entry.connect("notify::text", self.on_target_changed)
+        self.headers_entry.connect("notify::text", self.on_headers_changed)
+        self.auto_fetch.connect("notify::value", self.on_interval_changed)
+        self.match_bg_color.connect("notify::rgba", self.on_match_bg_changed)
+
+        return [self.url_entry, self.headers_entry, self.keys_entry, self.auto_fetch]
+
+    def on_target_changed(self, entry, *args):
+        self.on_text_changed(entry, "target")
+
+    def on_headers_changed(self, entry, *args):
+        self.on_text_changed(entry, "headers")
+
+    def on_interval_changed(self, entry, *args):
+        settings = self.get_settings()
+        settings["interval"] = entry.get_value()
         self.set_settings(settings)
 
-        # Connect entry
-        entry_row.connect("notify::text", self.on_change_url)
-        # Connect switch
-        new_window_toggle.connect("notify::active", self.on_change_new_window)
+    def on_match_bg_changed(self, entry, *args):
+        settings = self.get_settings()
+        settings["match_bg_color"] = entry.get_rgba()
+        self.set_settings(settings)
 
-        return [entry_row]
+    def on_text_changed(self, entry, key):
+        settings = self.get_settings()
+        settings[key] = entry.get_text()
+        self.set_settings(settings)
