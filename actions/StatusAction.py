@@ -59,10 +59,9 @@ class StatusAction(ActionBase):
         self.perform_check_async()
 
     def on_tick(self):
-        if self.settings.get("interval", 0):
-            return
-            
-        interval = self.settings.get("interval", 60)
+        settings = self.get_settings()
+
+        interval = settings["interval"]
         if interval <= 0:
             return
             
