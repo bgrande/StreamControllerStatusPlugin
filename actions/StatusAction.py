@@ -58,7 +58,7 @@ class StatusAction(ActionBase):
         #self.perform_check_async()
 
     def on_tick(self):
-        interval = self.s["interval"]
+        interval = self.settings["interval"]
         if interval <= 0:
             return
             
