@@ -1,5 +1,5 @@
 {
-    "id": "com_bgrande_status-plugin",
+    "id": "com_bgrande_statusplugin",
     "name": "Status Plugin",
     "author": "Benedikt Grande",
     "description": "Calls a website/API or local script and changes button state based on result",
@@ -7,5 +7,14 @@
     "thumbnail": "store/Thumbnail.png",
     "tags": ["Network", "Status", "Bash", "Command"],
     "minimum-app-version": "1.0.0",
-    "app-version": "1.5.0-beta"
+    "app-version": "1.5.0-beta",
+    "github": "https://github.com/bgrande/StreamControllerStatusPlugin",
+    "descriptions": {
+        "en_US": "Status Plugin calls a website/API or local script/applicatoin and changes button state (like background color, text, text color) based on the result.",
+        "de_DE": "Das Status Plugin ruft eine Website/API oder ein lokales Skript/Applikation auf und ändert den Buttonstatus (wie Hintergrundfarbe, Text, Textfarbe) basierend auf dem Ergebnis."
+    },
+    "short-descriptions": {
+        "en_US": "Flexible source based button status control via StreamController.",
+        "de_DE": "Flexible auf Programmquellen basierende Statuskontrolle mit dem StreamController."
+    }
 }
