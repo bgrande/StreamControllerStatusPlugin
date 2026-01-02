@@ -34,5 +34,5 @@ class StatusPlugin(PluginBase):
     #    self.lm = self.locale_manager
     #    self.lm.set_to_os_default()
 
-    def get_selector_icon(self) -> Gtk.Widget:
-        return Gtk.Image(icon_name="network-transmit-receive")
+    #def get_selector_icon(self) -> Gtk.Widget:
+    #    return Gtk.Image(icon_name="network-transmit-receive")
