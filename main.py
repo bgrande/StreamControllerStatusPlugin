@@ -21,7 +21,7 @@ class StatusPlugin(PluginBase):
             # icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
             action_support={
                 Input.Key: ActionInputSupport.SUPPORTED,
-                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Dial: ActionInputSupport.UNTESTED,
                 Input.Touchscreen: ActionInputSupport.UNTESTED
             }
         )

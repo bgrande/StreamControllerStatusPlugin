@@ -86,9 +86,8 @@ class StatusAction(ActionBase):
         settings = self.get_settings()
         command_type = settings.get("type", "web")
         target = settings.get("target", "")
-        username = settings.get("username", "")
-        password = settings.get("password", "")
-        
+        headers = settings.get("headers", "{}")
+
         result = ""
         success = False
         status_code = -1
@@ -96,8 +95,7 @@ class StatusAction(ActionBase):
         try:
             if command_type == "web":
                 try:
-                    base64string = base64.b64encode(bytes('%s:%s' % (username, password), 'utf-8'))
-                    request = urllib.request.Request(target, headers={'User-Agent': 'Mozilla/5.0', 'Authorization': "Basic %s" % base64string})
+                    request = urllib.request.Request(target, headers=headers)
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
@@ -171,6 +169,9 @@ class StatusAction(ActionBase):
         self.target_entry.set_text(settings.get("target", ""))  # Does not accept None
         self.headers_entry.set_text(settings.get("headers", "{}"))
         self.auto_fetch.set_value(settings.get("interval", 0))
+
+    def get_custom_config_area(self):
+        return Gtk.Label(label="Add your custom status calls here")
 
     def get_config_rows(self) -> list:
         self.target_entry = Adw.EntryRow(title="URL (i.e. https://google.com) or application path (i.e. /usr/bin/myscript)")
