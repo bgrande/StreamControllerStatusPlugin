@@ -20,6 +20,7 @@ from gi.repository import Gtk, Adw, Gio
 class StatusAction(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.has_configuration = True
         
         # Initialize default settings if not present
@@ -44,13 +45,11 @@ class StatusAction(ActionBase):
             "headers": "{}",
         }
 
-        settings = self.get_settings()
+        self.settings = self.get_settings()
 
         for key, value in defaults.items():
             if key not in settings:
-                settings[key] = value
-
-        self.set_settings(settings)
+                self.settings.setdefault(key, "")
 
         self.last_check_time = 0
         self.is_checking = False
@@ -188,7 +187,7 @@ class StatusAction(ActionBase):
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
         self.match_bg_color.connect("notify::rgba", self.on_match_bg_changed)
 
-        return [self.url_entry, self.headers_entry, self.keys_entry, self.auto_fetch]
+        return [self.target_entry, self.headers_entry, self.auto_fetch, self.match_bg_color]
 
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, "target")
