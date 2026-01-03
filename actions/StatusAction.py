@@ -190,11 +190,7 @@ class StatusAction(ActionBase):
 
         # Create the Color Picker Row
         self.match_bg_row = Adw.ActionRow(title="Match Background Color")
-
-        # 1. Create a ColorDialog
         color_dialog = Gtk.ColorDialog(with_alpha=True)
-
-        # 2. Create the ColorDialogButton
         self.match_bg_button = Gtk.ColorDialogButton(dialog=color_dialog)
         self.match_bg_button.set_valign(Gtk.Align.CENTER)
 
@@ -209,7 +205,7 @@ class StatusAction(ActionBase):
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
         self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
 
-        return [self.target_entry, self.headers_entry, self.auto_fetch]
+        return [self.target_entry, self.headers_entry, self.auto_fetch, self.match_bg_button]
 
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, "target")
