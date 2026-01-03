@@ -205,7 +205,7 @@ class StatusAction(ActionBase):
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
         self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
 
-        return [self.target_entry, self.headers_entry, self.auto_fetch, self.match_bg_button]
+        return [self.target_entry, self.headers_entry, self.auto_fetch, self.match_bg_row]
 
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, "target")
