@@ -15,7 +15,7 @@ from src.backend.PluginManager.PluginBase import PluginBase
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw, Gio
+from gi.repository import Gtk, Adw, Gio, Gdk
 
 class StatusAction(ActionBase):
     def __init__(self, *args, **kwargs):
@@ -170,6 +170,14 @@ class StatusAction(ActionBase):
         self.headers_entry.set_text(settings.get("headers", "{}"))
         self.auto_fetch.set_value(settings.get("interval", 0))
 
+        color_list = settings.get("match_bg_color", [0, 255, 0, 255])
+        rgba = Gdk.RGBA()
+        rgba.red = color_list[0] / 255.0
+        rgba.green = color_list[1] / 255.0
+        rgba.blue = color_list[2] / 255.0
+        rgba.alpha = color_list[3] / 255.0
+        self.match_bg_button.set_rgba(rgba)
+
     def get_custom_config_area(self):
         return Gtk.Label(label="Add your custom status calls here")
 
@@ -177,9 +185,21 @@ class StatusAction(ActionBase):
         self.target_entry = Adw.EntryRow(title="URL (i.e. https://google.com) or application path (i.e. /usr/bin/myscript)")
         self.headers_entry = Adw.EntryRow(title="Header (json)")
         self.auto_fetch = Adw.SpinRow.new_with_range(step=1, min=0, max=3600)
-        self.auto_fetch.set_title("Auto Fetch (s)")
+        self.auto_fetch.set_title("Auto Interval (s)")
         self.auto_fetch.set_subtitle("0 to disable")
-        #self.match_bg_color = Adw.ColorButton(title="Match Background Color")
+
+        # Create the Color Picker Row
+        self.match_bg_row = Adw.ActionRow(title="Match Background Color")
+
+        # 1. Create a ColorDialog
+        color_dialog = Gtk.ColorDialog(with_alpha=True)
+
+        # 2. Create the ColorDialogButton
+        self.match_bg_button = Gtk.ColorDialogButton(dialog=color_dialog)
+        self.match_bg_button.set_valign(Gtk.Align.CENTER)
+
+        # 3. Add button as a suffix to the Adw.ActionRow
+        self.match_bg_row.add_suffix(self.match_bg_button)
 
         self.load_config_defaults()
 
@@ -187,7 +207,7 @@ class StatusAction(ActionBase):
         self.target_entry.connect("notify::text", self.on_target_changed)
         self.headers_entry.connect("notify::text", self.on_headers_changed)
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
-        #self.match_bg_color.connect("notify::rgba", self.on_match_bg_changed)
+        self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
 
         return [self.target_entry, self.headers_entry, self.auto_fetch]
 
@@ -203,8 +223,15 @@ class StatusAction(ActionBase):
         self.set_settings(settings)
 
     def on_match_bg_changed(self, entry, *args):
+        rgba = button.get_rgba()
         settings = self.get_settings()
-        settings["match_bg_color"] = entry.get_rgba()
+        # Store as [R, G, B, A] in 0-255 range to match your defaults
+        settings["match_bg_color"] = [
+            int(rgba.red * 255),
+            int(rgba.green * 255),
+            int(rgba.blue * 255),
+            int(rgba.alpha * 255)
+        ]
         self.set_settings(settings)
 
     def on_text_changed(self, entry, key):
