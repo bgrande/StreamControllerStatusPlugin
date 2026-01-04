@@ -203,8 +203,8 @@ class StatusAction(ActionBase):
 
         # Set match mode index
         current_mode = settings.get(MATCH_MODE, MATCH_MODE_STATUS_CODE)
-        if current_mode in self.match_mode_list:
-            index = self.match_mode_list.index(current_mode)
+        if current_mode in self.match_modes:
+            index = self.match_modes.index(current_mode)
             self.match_mode_dropdown.set_selected(index)
 
         # match value
@@ -251,13 +251,15 @@ class StatusAction(ActionBase):
         self.auto_fetch.set_subtitle("0 to disable")
 
         # dropdown for result handling selection (web/local)
-        self.match_mode_list = Gtk.StringList.new([
+        self.match_modes = [
             MATCH_MODE_STATUS_CODE,
             MATCH_MODE_CONTAINS,
             MATCH_MODE_EQUALS,
             MATCH_MODE_SUCCESS,
             MATCH_MODE_REGEX
-        ])
+        ]
+        self.match_mode_list = Gtk.StringList.new(self.match_modes)
+
         self.match_mode_dropdown = Adw.ComboRow(
             title="Result Handling Type",
             model=self.match_mode_list
@@ -307,8 +309,8 @@ class StatusAction(ActionBase):
     def on_match_mode_changed(self, widget, *args):
         settings = self.get_settings()
         selected_index = widget.get_selected()
-        if 0 <= selected_index < len(self.match_mode_list):
-            settings[MATCH_MODE] = self.match_mode_list[selected_index]
+        if 0 <= selected_index < len(self.match_modes):
+            settings[MATCH_MODE] = self.match_modes[selected_index]
             self.set_settings(settings)
 
     def on_type_changed(self, widget, *args):
