@@ -59,11 +59,11 @@ class StatusAction(ActionBase):
             MATCH_MODE: MATCH_MODE_STATUS_CODE,
             MATCH_BG_COLOR: [0, 255, 0, 255],
             "match_text_color": [255, 255, 255, 255],
-            "match_label": "Online",
+            "match_label": "OK",
             "match_image": "",
             NOMATCH_BG_COLOR: [255, 0, 0, 255],
             "nomatch_text_color": [255, 255, 255, 255],
-            "nomatch_label": "Offline",
+            "nomatch_label": "ERROR",
             "nomatch_image": "",
             HEADERS: "{}"
         }
@@ -169,6 +169,10 @@ class StatusAction(ActionBase):
         label = settings.get(f"{prefix}label", "")
         image_path = settings.get(f"{prefix}image", "")
 
+        # falling back to label (OK/ERROR) if there was no useful result
+        if result not in ["", "false", "true", None, "0", "1"]:
+            result = label
+
         # can we just always show the text (and disable in the settings if not needed) -> test
         self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
         self.set_background_color(bg_color)
@@ -224,6 +228,8 @@ class StatusAction(ActionBase):
         rgba.blue = color_list[2] / 255.0
         rgba.alpha = color_list[3] / 255.0
         self.nomatch_bg_button.set_rgba(rgba)
+
+        # todo implement text colors (match/nomatch)
 
     def get_custom_config_area(self):
         return Gtk.Label(label="Add your custom status calls here")
