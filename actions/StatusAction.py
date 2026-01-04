@@ -219,7 +219,7 @@ class StatusAction(ActionBase):
         self.set_settings(settings)
 
     def on_match_bg_changed(self, entry, *args):
-        rgba = button.get_rgba()
+        rgba = entry.get_rgba()
         settings = self.get_settings()
         # Store as [R, G, B, A] in 0-255 range to match your defaults
         settings["match_bg_color"] = [
