@@ -65,9 +65,7 @@ class StatusAction(ActionBase):
             "nomatch_text_color": [255, 255, 255, 255],
             "nomatch_label": "Offline",
             "nomatch_image": "",
-            "return_type": "background_color",  # background_color, text, text_color, background_image
-            "return_handler": "",
-            HEADERS: "{}",
+            HEADERS: "{}"
         }
 
         self.settings = self.get_settings()
@@ -170,14 +168,13 @@ class StatusAction(ActionBase):
         text_color = settings.get(f"{prefix}text_color", [255, 255, 255, 255])
         label = settings.get(f"{prefix}label", "")
         image_path = settings.get(f"{prefix}image", "")
-        return_type = settings.get("return_type", "")
 
-        # todo rework this
-        if return_type == "string":
-            self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
-        elif return_type == "background_color":
-            self.set_background_color(bg_color)
-        elif return_type == "background_image":
+        # can we just always show the text (and disable in the settings if not needed) -> test
+        self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
+        self.set_background_color(bg_color)
+
+        # todo this is not implemented yet
+        if image_path != "":
             # todo: set background image: set_media(self, image = None, media_path=None, size: float = None, valign: float = None, halign: float = None, fps: int = 30, loop: bool = True, update: bool = True):
             if image_path and os.path.exists(image_path):
                 # this needs to copy the image somewhere, first, probably better use image=image_file (from request)
