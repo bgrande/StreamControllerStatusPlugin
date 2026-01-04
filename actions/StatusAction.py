@@ -258,6 +258,12 @@ class StatusAction(ActionBase):
             self.nomatch_bg_row
         ]
 
+    def on_type_changed(self, widget, *args):
+        settings = self.get_settings()
+        # 0 is Web, 1 is Local based on the StringList order
+        settings[TYPE] = TYPE_WEB if widget.get_selected() == 0 else TYPE_LOCAL
+        self.set_settings(settings)
+
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, TARGET)
 
