@@ -291,15 +291,17 @@ class StatusAction(ActionBase):
         self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
         self.nomatch_bg_button.connect("notify::rgba", self.on_nomatch_bg_changed)
         self.match_mode_dropdown.connect("notify::selected", self.on_match_mode_changed)
+        self.match_value_entry.connect("notify::text", self.on_match_value_changed)
 
         return [
             self.type_dropdown,
             self.target_entry,
             self.headers_entry,
             self.auto_fetch,
+            self.match_mode_dropdown,
+            self.match_value_entry,
             self.match_bg_row,
-            self.nomatch_bg_row,
-            self.match_mode_dropdown
+            self.nomatch_bg_row
         ]
 
     def on_match_mode_changed(self, widget, *args):
@@ -314,6 +316,9 @@ class StatusAction(ActionBase):
         # 0 is Web, 1 is Local based on the StringList order
         settings[TYPE] = TYPE_WEB if widget.get_selected() == 0 else TYPE_LOCAL
         self.set_settings(settings)
+
+    def on_match_value_changed(self, entry, *args):
+        self.on_text_changed(entry, MATCH_VALUE)
 
     def on_target_changed(self, entry, *args):
         self.on_text_changed(entry, TARGET)
