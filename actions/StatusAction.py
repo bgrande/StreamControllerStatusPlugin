@@ -14,6 +14,16 @@ from src.backend.PluginManager.PluginBase import PluginBase
 # Import gtk modules
 import gi
 
+MATCH_VALUE_DEFAULT = "200"
+
+MATCH_MODE_REGEX = "Regex"
+
+MATCH_MODE_SUCCESS = "Success"
+
+MATCH_MODE_EQUALS = "Equals"
+
+MATCH_MODE_CONTAINS = "Contains"
+
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio, Gdk
@@ -45,7 +55,7 @@ class StatusAction(ActionBase):
             TYPE: TYPE_WEB,  # web, local
             TARGET: "https://google.com",
             INTERVAL: 0,
-            MATCH_VALUE: "200",
+            MATCH_VALUE: MATCH_VALUE_DEFAULT,
             MATCH_MODE: MATCH_MODE_STATUS_CODE,
             MATCH_BG_COLOR: [0, 255, 0, 255],
             "match_text_color": [255, 255, 255, 255],
@@ -134,16 +144,15 @@ class StatusAction(ActionBase):
         
         is_match = False
 
-        # todo: the following has to be rethought and redone!
         if match_mode == MATCH_MODE_STATUS_CODE:
             is_match = str(status_code) == match_value
-        elif match_mode == "Contains":
+        elif match_mode == MATCH_MODE_CONTAINS:
             is_match = match_value in result
-        elif match_mode == "Equals":
+        elif match_mode == MATCH_MODE_EQUALS:
             is_match = result == match_value
-        elif match_mode == "Success":
+        elif match_mode == MATCH_MODE_SUCCESS:
             is_match = success
-        elif match_mode == "Regex":
+        elif match_mode == MATCH_MODE_REGEX:
             import re
             try:
                 is_match = bool(re.search(match_value, result))
@@ -163,6 +172,7 @@ class StatusAction(ActionBase):
         image_path = settings.get(f"{prefix}image", "")
         return_type = settings.get("return_type", "")
 
+        # todo rework this
         if return_type == "string":
             self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
         elif return_type == "background_color":
@@ -182,10 +192,25 @@ class StatusAction(ActionBase):
         selected_type = settings.get(TYPE, TYPE_WEB)
         self.type_dropdown.set_selected(0 if selected_type == TYPE_WEB else 1)
 
+        # target
         self.target_entry.set_text(settings.get(TARGET, ""))  # Does not accept None
+
+        # headers
         self.headers_entry.set_text(settings.get(HEADERS, "{}"))
+
+        # interval
         self.auto_fetch.set_value(settings.get(INTERVAL, 0))
 
+        # Set match mode index
+        current_mode = settings.get(MATCH_MODE, MATCH_MODE_STATUS_CODE)
+        if current_mode in self.match_modes:
+            index = self.match_modes.index(current_mode)
+            self.match_mode_dropdown.set_selected(index)
+
+        # match value
+        self.match_value_entry.set_text(settings.get(MATCH_VALUE, MATCH_VALUE_DEFAULT))  # Does not accept None
+
+        # match/success background color
         color_list = settings.get(MATCH_BG_COLOR, [0, 255, 0, 255])
         rgba = Gdk.RGBA()
         rgba.red = color_list[0] / 255.0
@@ -194,6 +219,7 @@ class StatusAction(ActionBase):
         rgba.alpha = color_list[3] / 255.0
         self.match_bg_button.set_rgba(rgba)
 
+        # no match/error background color
         color_list = settings.get(NOMATCH_BG_COLOR, [0, 255, 0, 255])
         rgba = Gdk.RGBA()
         rgba.red = color_list[0] / 255.0
@@ -224,6 +250,22 @@ class StatusAction(ActionBase):
         self.auto_fetch.set_title("Auto Interval (s)")
         self.auto_fetch.set_subtitle("0 to disable")
 
+        # dropdown for result handling selection (web/local)
+        self.match_mode = Gtk.StringList.new([
+            MATCH_MODE_STATUS_CODE,
+            MATCH_MODE_CONTAINS,
+            MATCH_MODE_EQUALS,
+            MATCH_MODE_SUCCESS,
+            MATCH_MODE_REGEX
+        ])
+        self.match_mode_dropdown = Adw.ComboRow(
+            title="Result Handling Type",
+            model=self.type_list
+        )
+
+        # set match value
+        self.match_value_entry = Adw.EntryRow(title="Expected value (depends on <i>Result Handling Type</i>)")
+
         # select background color for success
         self.match_bg_row = Adw.ActionRow(title="Success Background Color")
         color_dialog = Gtk.ColorDialog(with_alpha=True)
@@ -248,6 +290,7 @@ class StatusAction(ActionBase):
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
         self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
         self.nomatch_bg_button.connect("notify::rgba", self.on_nomatch_bg_changed)
+        self.match_mode_dropdown.connect("notify::selected", self.on_match_mode_changed)
 
         return [
             self.type_dropdown,
@@ -255,8 +298,16 @@ class StatusAction(ActionBase):
             self.headers_entry,
             self.auto_fetch,
             self.match_bg_row,
-            self.nomatch_bg_row
+            self.nomatch_bg_row,
+            self.match_mode_dropdown
         ]
+
+    def on_match_mode_changed(self, widget, *args):
+        settings = self.get_settings()
+        selected_index = widget.get_selected()
+        if 0 <= selected_index < len(self.match_modes):
+            settings[MATCH_MODE] = self.match_modes[selected_index]
+            self.set_settings(settings)
 
     def on_type_changed(self, widget, *args):
         settings = self.get_settings()
