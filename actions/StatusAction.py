@@ -28,6 +28,7 @@ INTERVAL = "interval"
 HEADERS = "headers"
 HEADER_DEFAULT = "{}"
 TARGET = "target"
+TARGET_DEFAULT = "https://google.com"
 MATCH_VALUE = "match_value"
 MATCH_VALUE_DEFAULT = "200"
 MATCH_MODE = "match_mode"
@@ -53,19 +54,19 @@ class StatusAction(ActionBase):
         # Initialize default settings if not present
         defaults = {
             TYPE: TYPE_WEB,  # web, local
-            TARGET: "https://google.com",
+            TARGET: TARGET_DEFAULT,
             INTERVAL: 0,
             MATCH_VALUE: MATCH_VALUE_DEFAULT,
             MATCH_MODE: MATCH_MODE_STATUS_CODE,
             MATCH_BG_COLOR: [0, 255, 0, 255],
-            "match_text_color": [255, 255, 255, 255],
+            MATCH_TEXT_COLOR: [255, 255, 255, 255],
             "match_label": "OK",
             "match_image": "",
             NOMATCH_BG_COLOR: [255, 0, 0, 255],
-            "nomatch_text_color": [255, 255, 255, 255],
+            NOMATCH_TEXT_COLOR: [255, 255, 255, 255],
             "nomatch_label": "ERROR",
             "nomatch_image": "",
-            HEADERS: "{}"
+            HEADERS: HEADER_DEFAULT
         }
 
         self.settings = self.get_settings()
@@ -75,8 +76,6 @@ class StatusAction(ActionBase):
                 self.settings[key] = value;
 
         self.set_settings(self.settings)
-
-        #self.perform_check_async()
 
     def on_tick(self):
         interval = self.get_settings().get(INTERVAL, 0)
