@@ -16,16 +16,6 @@ from src.backend.PluginManager.PluginBase import PluginBase
 # Import gtk modules
 import gi
 
-MATCH_VALUE_DEFAULT = "200"
-
-MATCH_MODE_REGEX = "Regex"
-
-MATCH_MODE_SUCCESS = "Success"
-
-MATCH_MODE_EQUALS = "Equals"
-
-MATCH_MODE_CONTAINS = "Contains"
-
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio, Gdk
@@ -36,9 +26,15 @@ NOMATCH_TEXT_COLOR = "nomatch_text_color"
 MATCH_TEXT_COLOR = "match_text_color"
 INTERVAL = "interval"
 HEADERS = "headers"
+HEADER_DEFAULT = "{}"
 TARGET = "target"
 MATCH_VALUE = "match_value"
+MATCH_VALUE_DEFAULT = "200"
 MATCH_MODE = "match_mode"
+MATCH_MODE_REGEX = "Regex"
+MATCH_MODE_SUCCESS = "Success"
+MATCH_MODE_EQUALS = "Equals"
+MATCH_MODE_CONTAINS = "Contains"
 MATCH_MODE_STATUS_CODE = "Status Code"
 TYPE = "type"
 TYPE_WEB = "web"
@@ -69,7 +65,7 @@ class StatusAction(ActionBase):
             "nomatch_text_color": [255, 255, 255, 255],
             "nomatch_label": "ERROR",
             "nomatch_image": "",
-            HEADERS: None
+            HEADERS: "{}"
         }
 
         self.settings = self.get_settings()
@@ -111,16 +107,13 @@ class StatusAction(ActionBase):
         settings = self.get_settings()
         command_type = settings.get(TYPE, TYPE_WEB)
         target = settings.get(TARGET, "")
-        headers = settings.get(HEADERS, None)
+        headers = settings.get(HEADERS, HEADER_DEFAULT)
 
-        if headers is None or headers == "" or headers == "{}":
+        try:
+            headers = json.loads(headers)
+        except json.JSONDecodeError:
+            log.error(f"Invalid JSON headers: {headers}")
             headers = {}
-        else:
-            try:
-                headers = json.loads(headers)
-            except json.JSONDecodeError:
-                log.error(f"Invalid JSON headers: {headers}")
-                headers = {}
 
         result = ""
         success = False
@@ -222,7 +215,7 @@ class StatusAction(ActionBase):
         self.target_entry.set_text(settings.get(TARGET, ""))  # Does not accept None
 
         # headers
-        self.headers_entry.set_text(settings.get(HEADERS, None))
+        self.headers_entry.set_text(settings.get(HEADERS, HEADER_DEFAULT))
 
         # interval
         self.auto_fetch.set_value(settings.get(INTERVAL, 0))
