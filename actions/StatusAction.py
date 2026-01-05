@@ -16,6 +16,8 @@ from src.backend.PluginManager.PluginBase import PluginBase
 # Import gtk modules
 import gi
 
+RESULT_MAX_CHARS = 30
+
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio, Gdk
@@ -150,11 +152,11 @@ class StatusAction(ActionBase):
             # Ensure result is a string
             if isinstance(result, bytes):
                 result = result.decode('utf-8', errors='ignore')
-
+            log.debug(f"Final result1: {result}")
             # reducing result text if too long
-            if result.len() > 100:
-                result = result[:100] + "..."
-
+            if result.len() > RESULT_MAX_CHARS:
+                result = result[:RESULT_MAX_CHARS] + "..."
+            log.debug(f"Final result2: {result}")
             self.evaluate_result(result, status_code, success)
             self.is_checking = False
 
