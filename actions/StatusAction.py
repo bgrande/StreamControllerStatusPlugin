@@ -68,7 +68,7 @@ class StatusAction(ActionBase):
             "nomatch_text_color": [255, 255, 255, 255],
             "nomatch_label": "ERROR",
             "nomatch_image": "",
-            HEADERS: "{}"
+            HEADERS: None
         }
 
         self.settings = self.get_settings()
@@ -82,7 +82,7 @@ class StatusAction(ActionBase):
         #self.perform_check_async()
 
     def on_tick(self):
-        interval = self.get_settings().get("interval", 0)
+        interval = self.get_settings().get(INTERVAL, 0)
 
         if interval <= 0:
             return
@@ -110,7 +110,7 @@ class StatusAction(ActionBase):
         settings = self.get_settings()
         command_type = settings.get(TYPE, TYPE_WEB)
         target = settings.get(TARGET, "")
-        headers = settings.get(HEADERS, "{}")
+        headers = settings.get(HEADERS, None)
 
         result = ""
         success = False
@@ -211,7 +211,7 @@ class StatusAction(ActionBase):
         self.target_entry.set_text(settings.get(TARGET, ""))  # Does not accept None
 
         # headers
-        self.headers_entry.set_text(settings.get(HEADERS, "{}"))
+        self.headers_entry.set_text(settings.get(HEADERS, None))
 
         # interval
         self.auto_fetch.set_value(settings.get(INTERVAL, 0))
@@ -276,7 +276,7 @@ class StatusAction(ActionBase):
         self.target_entry = Adw.EntryRow(title="URL (i.e. https://google.com) or application path (i.e. /usr/bin/myscript)")
 
         # set headers for request
-        self.headers_entry = Adw.EntryRow(title="Header (json)")
+        self.headers_entry = Adw.EntryRow(title="Header (JSON object as string)")
 
         # set auto fetch interval
         self.auto_fetch = Adw.SpinRow.new_with_range(step=1, min=0, max=3600)
