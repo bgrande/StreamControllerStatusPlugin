@@ -30,6 +30,8 @@ from gi.repository import Gtk, Adw, Gio, Gdk
 
 NOMATCH_BG_COLOR = "nomatch_bg_color"
 MATCH_BG_COLOR = "match_bg_color"
+NOMATCH_TEXT_COLOR = "nomatch_text_color"
+MATCH_TEXT_COLOR = "match_text_color"
 INTERVAL = "interval"
 HEADERS = "headers"
 TARGET = "target"
@@ -229,7 +231,23 @@ class StatusAction(ActionBase):
         rgba.alpha = color_list[3] / 255.0
         self.nomatch_bg_button.set_rgba(rgba)
 
-        # todo implement text colors (match/nomatch)
+        # match text color
+        color_list = settings.get(MATCH_TEXT_COLOR, [255, 255, 255, 255])
+        rgba = Gdk.RGBA()
+        rgba.red = color_list[0] / 255.0
+        rgba.green = color_list[1] / 255.0
+        rgba.blue = color_list[2] / 255.0
+        rgba.alpha = color_list[3] / 255.0
+        self.match_text_button.set_rgba(rgba)
+
+        # nomatch text color
+        color_list = settings.get(NOMATCH_TEXT_COLOR, [255, 255, 255, 255])
+        rgba = Gdk.RGBA()
+        rgba.red = color_list[0] / 255.0
+        rgba.green = color_list[1] / 255.0
+        rgba.blue = color_list[2] / 255.0
+        rgba.alpha = color_list[3] / 255.0
+        self.nomatch_text_button.set_rgba(rgba)
 
     def get_custom_config_area(self):
         return Gtk.Label(label="Add your custom status calls here")
@@ -285,6 +303,20 @@ class StatusAction(ActionBase):
         self.nomatch_bg_button.set_valign(Gtk.Align.CENTER)
         self.nomatch_bg_row.add_suffix(self.nomatch_bg_button)
 
+        # select text color for success
+        self.match_text_row = Adw.ActionRow(title="Success Text Color")
+        color_dialog_text_match = Gtk.ColorDialog(with_alpha=True)
+        self.match_text_button = Gtk.ColorDialogButton(dialog=color_dialog_text_match)
+        self.match_text_button.set_valign(Gtk.Align.CENTER)
+        self.match_text_row.add_suffix(self.match_text_button)
+
+        # select text color for failure
+        self.nomatch_text_row = Adw.ActionRow(title="Error Text Color")
+        color_dialog_text_nomatch = Gtk.ColorDialog(with_alpha=True)
+        self.nomatch_text_button = Gtk.ColorDialogButton(dialog=color_dialog_text_nomatch)
+        self.nomatch_text_button.set_valign(Gtk.Align.CENTER)
+        self.nomatch_text_row.add_suffix(self.nomatch_text_button)
+
         # now loading default config
         self.load_config_defaults()
 
@@ -295,6 +327,8 @@ class StatusAction(ActionBase):
         self.auto_fetch.connect("notify::value", self.on_interval_changed)
         self.match_bg_button.connect("notify::rgba", self.on_match_bg_changed)
         self.nomatch_bg_button.connect("notify::rgba", self.on_nomatch_bg_changed)
+        self.match_text_button.connect("notify::rgba", self.on_match_text_changed)
+        self.nomatch_text_button.connect("notify::rgba", self.on_nomatch_text_changed)
         self.match_mode_dropdown.connect("notify::selected", self.on_match_mode_changed)
         self.match_value_entry.connect("notify::text", self.on_match_value_changed)
 
@@ -306,7 +340,9 @@ class StatusAction(ActionBase):
             self.match_mode_dropdown,
             self.match_value_entry,
             self.match_bg_row,
-            self.nomatch_bg_row
+            self.nomatch_bg_row,
+            self.match_text_row,
+            self.nomatch_text_row
         ]
 
     def on_match_mode_changed(self, widget, *args):
@@ -341,6 +377,12 @@ class StatusAction(ActionBase):
 
     def on_nomatch_bg_changed(self, entry, *args):
         self.color_changed(entry, NOMATCH_BG_COLOR)
+
+    def on_match_text_changed(self, entry, *args):
+        self.color_changed(entry, MATCH_TEXT_COLOR)
+
+    def on_nomatch_text_changed(self, entry, *args):
+        self.color_changed(entry, NOMATCH_TEXT_COLOR)
 
     def color_changed(self, entry, key):
         rgba = entry.get_rgba()

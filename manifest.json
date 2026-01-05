@@ -3,7 +3,7 @@
     "name": "Status Plugin",
     "author": "Benedikt Grande",
     "description": "Calls a website/API or local script and changes button state based on result",
-    "version": "0.3.10",
+    "version": "0.4.0",
     "thumbnail": "store/Thumbnail.png",
     "tags": ["Network", "Status", "Bash", "Command"],
     "minimum-app-version": "1.0.0",
