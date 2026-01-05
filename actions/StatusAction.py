@@ -112,9 +112,6 @@ class StatusAction(ActionBase):
         target = settings.get(TARGET, "")
         headers = settings.get(HEADERS, None)
 
-        if headers == "":
-            headers = None
-
         result = ""
         success = False
         status_code = -1
@@ -123,7 +120,11 @@ class StatusAction(ActionBase):
             if command_type == TYPE_WEB:
                 try:
                     log.info(f"Requesting URL: {target}")
-                    request = urllib.request.Request(target, headers=headers)
+                    if headers == "":
+                        request = urllib.request.Request(target)
+                    else:
+                        request = urllib.request.Request(target, headers=headers)
+
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
