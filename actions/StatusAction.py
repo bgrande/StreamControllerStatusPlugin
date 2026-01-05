@@ -5,6 +5,7 @@ import time
 import urllib.request
 import urllib.error
 import base64
+import json
 from loguru import logger as log
 
 from src.backend.DeckManagement.DeckController import DeckController
@@ -112,6 +113,11 @@ class StatusAction(ActionBase):
         target = settings.get(TARGET, "")
         headers = settings.get(HEADERS, None)
 
+        if headers is None or headers == "" or headers == "{}":
+            headers = {}
+        else:
+            headers = json.loads(headers)
+
         result = ""
         success = False
         status_code = -1
@@ -120,10 +126,7 @@ class StatusAction(ActionBase):
             if command_type == TYPE_WEB:
                 try:
                     log.info(f"Requesting URL: {target}")
-                    if headers == "":
-                        request = urllib.request.Request(target)
-                    else:
-                        request = urllib.request.Request(target, headers=headers)
+                    request = urllib.request.Request(target, headers=headers)
 
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
