@@ -186,7 +186,7 @@ class StatusAction(ActionBase):
         image_path = settings.get(f"{prefix}image", "")
 
         # falling back to label (OK/ERROR) if there was no useful result
-        if result not in ["", "false", "true", None, "0", "1"]:
+        if result in ["", "false", "true", None, "0", "1"]:
             result = label
 
         # can we just always show the text (and disable in the settings if not needed) -> test
