@@ -5,6 +5,7 @@ import time
 import urllib.request
 import urllib.error
 import base64
+import logging
 
 from src.backend.DeckManagement.DeckController import DeckController
 from src.backend.PageManagement.Page import Page
