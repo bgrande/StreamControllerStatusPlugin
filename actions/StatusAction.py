@@ -129,11 +129,11 @@ class StatusAction(ActionBase):
                         log.info(f"Code: {status_code}")
                         log.info(f"Response: {response}")
                 except urllib.error.HTTPError as e:
-                    log.info(f"HTTP Error: {e.format_exc()}")
+                    log.exception("HTTP Error")
                     status_code = e.code
                     result = str(e)
                 except Exception as e:
-                    log.info(f"Unexpected error during web request: {e.format_exc()}")
+                    log.exception("Unexpected error during web request")
                     result = str(e)
             else: # local script
                 try:
@@ -142,7 +142,7 @@ class StatusAction(ActionBase):
                     status_code = process.returncode
                     success = True
                 except Exception as e:
-                    log.info(f"Failed to run local script: {e.format_exc()}")
+                    log.exception("Failed to run local script")
                     result = str(e)
         finally:
             self.evaluate_result(result, status_code, success)
