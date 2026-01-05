@@ -125,6 +125,9 @@ class StatusAction(ActionBase):
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
                         success = True
+                        log.debug(f"Result: {result}")
+                        log.debug(f"Code: {status_code}")
+                        log.debug(f"Response: {response}")
                 except urllib.error.HTTPError as e:
                     log.info(f"HTTP Error: {e.format_exc()}")
                     status_code = e.code
@@ -132,7 +135,7 @@ class StatusAction(ActionBase):
                 except Exception as e:
                     log.info(f"Unexpected error during web request: {e.format_exc()}")
                     result = str(e)
-            else: # Local Script
+            else: # local script
                 try:
                     process = subprocess.run(target, shell=True, capture_output=True, text=True, timeout=10)
                     result = process.stdout.strip()
@@ -171,7 +174,7 @@ class StatusAction(ActionBase):
     def update_ui(self, is_match: bool, result: str):
         prefix = "match_" if is_match else "nomatch_"
 
-        log.info(f"no updating with: {result}, {prefix}")
+        log.info(f"now updating with: {result}, {prefix}")
 
         settings = self.get_settings()
 
