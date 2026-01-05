@@ -53,6 +53,9 @@ class StatusAction(ActionBase):
         self.is_checking = False
 
     def on_ready(self):
+        # reset current_state
+        self.current_state = -1
+
         # Initialize default settings if not present
         defaults = {
             TYPE: TYPE_WEB,  # web, local
