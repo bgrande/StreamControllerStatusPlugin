@@ -147,6 +147,9 @@ class StatusAction(ActionBase):
                     log.exception("Failed to run local script")
                     result = str(e)
         finally:
+            # reducing result text if too long
+            if result.len() > 100:
+                result = result[:100] + "..."
             self.evaluate_result(result, status_code, success)
             self.is_checking = False
 
