@@ -152,11 +152,15 @@ class StatusAction(ActionBase):
             # Ensure result is a string
             if isinstance(result, bytes):
                 result = result.decode('utf-8', errors='ignore')
+
             log.debug(f"Final result1: {result}")
+
             # reducing result text if too long
-            if result.len() > RESULT_MAX_CHARS:
+            if len(result) > RESULT_MAX_CHARS:
                 result = result[:RESULT_MAX_CHARS] + "..."
+
             log.debug(f"Final result2: {result}")
+
             self.evaluate_result(result, status_code, success)
             self.is_checking = False
 
