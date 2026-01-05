@@ -105,7 +105,7 @@ class StatusAction(ActionBase):
         self.is_checking = True
         self.last_check_time = time.time()
 
-        self.log.debug("Starting status check...")
+        self.log.info("Starting status check...")
 
         settings = self.get_settings()
         command_type = settings.get(TYPE, TYPE_WEB)
@@ -119,18 +119,18 @@ class StatusAction(ActionBase):
         try:
             if command_type == TYPE_WEB:
                 try:
-                    self.log.debug(f"Requesting URL: {target}")
+                    self.log.info(f"Requesting URL: {target}")
                     request = urllib.request.Request(target, headers=headers)
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
                         success = True
                 except urllib.error.HTTPError as e:
-                    self.log.debug(f"HTTP Error: {e}")
+                    self.log.info(f"HTTP Error: {e}")
                     status_code = e.code
                     result = str(e)
                 except Exception as e:
-                    self.log.debug(f"Unexpected error during web request: {e}")
+                    self.log.info(f"Unexpected error during web request: {e}")
                     result = str(e)
             else: # Local Script
                 try:
@@ -139,7 +139,7 @@ class StatusAction(ActionBase):
                     status_code = process.returncode
                     success = True
                 except Exception as e:
-                    self.log.debug(f"Failed to run local script: {e}")
+                    self.log.info(f"Failed to run local script: {e}")
                     result = str(e)
         finally:
             self.evaluate_result(result, status_code, success)
@@ -171,7 +171,7 @@ class StatusAction(ActionBase):
     def update_ui(self, is_match: bool, result: str):
         prefix = "match_" if is_match else "nomatch_"
 
-        self.log.debug(f"no updating with: {result}, {prefix}")
+        self.log.info(f"no updating with: {result}, {prefix}")
 
         settings = self.get_settings()
 
