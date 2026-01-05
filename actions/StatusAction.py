@@ -125,9 +125,9 @@ class StatusAction(ActionBase):
                         status_code = response.getcode()
                         result = response.read().decode('utf-8')
                         success = True
-                        log.debug(f"Result: {result}")
-                        log.debug(f"Code: {status_code}")
-                        log.debug(f"Response: {response}")
+                        log.info(f"Result: {result}")
+                        log.info(f"Code: {status_code}")
+                        log.info(f"Response: {response}")
                 except urllib.error.HTTPError as e:
                     log.info(f"HTTP Error: {e.format_exc()}")
                     status_code = e.code
