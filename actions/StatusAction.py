@@ -134,7 +134,7 @@ class StatusAction(ActionBase):
 
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
-                        result = response.read().decode('utf-8')
+                        result = response.read()
                         success = True
                         log.info(f"Result: {result}")
                         log.info(f"Code: {status_code}")
