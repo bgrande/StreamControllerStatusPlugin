@@ -270,7 +270,7 @@ class StatusAction(ActionBase):
         # dropdown for type selection (web/local)
         self.type_list = Gtk.StringList.new([TYPE_WEB, TYPE_LOCAL])
         self.type_dropdown = Adw.ComboRow(
-            title="Target Type",
+            title="Target Type (web/local)",
             model=self.type_list
         )
 
