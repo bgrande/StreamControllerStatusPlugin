@@ -187,7 +187,7 @@ class StatusAction(ActionBase):
             result = label
 
         # can we just always show the text (and disable in the settings if not needed) -> test
-        self.set_center_label(text=f"{result}%", font_size=24, color=text_color)
+        self.set_center_label(text=f"{result}%", font_size=16, color=text_color)
         self.set_background_color(bg_color)
 
         # todo this is not implemented yet
