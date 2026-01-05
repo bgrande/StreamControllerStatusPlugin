@@ -121,16 +121,13 @@ class StatusAction(ActionBase):
         try:
             if command_type == TYPE_WEB:
                 try:
-                    log.info(f"Requesting URL: {target}")
+                    log.debug(f"Requesting URL: {target}")
                     request = urllib.request.Request(target, headers=headers)
 
                     with urllib.request.urlopen(request, timeout=10) as response:
                         status_code = response.getcode()
                         result = response.read()
                         success = True
-                        log.info(f"Result: {result}")
-                        log.info(f"Code: {status_code}")
-                        log.info(f"Response: {response}")
                 except urllib.error.HTTPError as e:
                     log.exception("HTTP Error")
                     status_code = e.code
@@ -144,6 +141,8 @@ class StatusAction(ActionBase):
                     result = process.stdout.strip()
                     status_code = process.returncode
                     success = True
+                    log.debug(f"Local script result: {result}")
+                    log.debug(f"status_code: {status_code}")
                 except Exception as e:
                     log.exception("Failed to run local script")
                     result = str(e)
