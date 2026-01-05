@@ -116,7 +116,11 @@ class StatusAction(ActionBase):
         if headers is None or headers == "" or headers == "{}":
             headers = {}
         else:
-            headers = json.loads(headers)
+            try:
+                headers = json.loads(headers)
+            except json.JSONDecodeError:
+                log.error(f"Invalid JSON headers: {headers}")
+                headers = {}
 
         result = ""
         success = False
