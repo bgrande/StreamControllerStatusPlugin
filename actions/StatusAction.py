@@ -112,6 +112,9 @@ class StatusAction(ActionBase):
         target = settings.get(TARGET, "")
         headers = settings.get(HEADERS, None)
 
+        if headers == "":
+            headers = None
+
         result = ""
         success = False
         status_code = -1
@@ -377,9 +380,6 @@ class StatusAction(ActionBase):
         self.on_text_changed(entry, TARGET)
 
     def on_headers_changed(self, entry, *args):
-        if entry.get_text() == "":
-            entry.set_text(None)
-
         self.on_text_changed(entry, HEADERS)
 
     def on_interval_changed(self, entry, *args):
