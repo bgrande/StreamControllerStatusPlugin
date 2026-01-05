@@ -12,8 +12,8 @@ class StatusPlugin(PluginBase):
         super().__init__()
 
         # init localization
-        self.init_locale_manager()
-        self.lm = self.locale_manager
+        #self.init_locale_manager()
+        #self.lm = self.locale_manager
 
         ## Register actions
         self.status_checker_holder = ActionHolder(
@@ -34,9 +34,9 @@ class StatusPlugin(PluginBase):
         # Register plugin
         self.register()
 
-    def init_locale_manager(self):
-        self.lm = self.locale_manager
-        self.lm.set_to_os_default()
+    #def init_locale_manager(self):
+    #    self.lm = self.locale_manager
+    #    self.lm.set_to_os_default()
 
     #def get_selector_icon(self) -> Gtk.Widget:
     #    return Gtk.Image(icon_name="network-transmit-receive")
