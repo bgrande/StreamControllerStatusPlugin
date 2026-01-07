@@ -4,6 +4,9 @@ from src.backend.PluginManager.ActionHolder import ActionHolder
 from src.backend.DeckManagement.InputIdentifier import Input
 from src.backend.PluginManager.ActionInputSupport import ActionInputSupport
 
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
+
 # Import actions
 from .actions import StatusAction
 
