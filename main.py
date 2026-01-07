@@ -25,7 +25,7 @@ class StatusPlugin(PluginBase):
             action_id_suffix = "StatusChecker",
             action_id = "com.bgrande.StatusPlugin::StatusChecker",
             action_name = "Status Checker",
-            icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
+            #icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
             action_support={
                 Input.Key: ActionInputSupport.SUPPORTED,
                 Input.Dial: ActionInputSupport.UNTESTED,
