@@ -6,7 +6,7 @@
 
 # 0.7.0
 + make thumbnail more pretty
-- add icon (choose something useful)
++ add icon (choose something useful)
 
 # 0.6.0
 + reset state on_ready
