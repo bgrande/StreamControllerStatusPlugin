@@ -4,8 +4,10 @@ from src.backend.PluginManager.ActionHolder import ActionHolder
 from src.backend.DeckManagement.InputIdentifier import Input
 from src.backend.PluginManager.ActionInputSupport import ActionInputSupport
 
-#gi.require_version("Gtk", "4.0")
-#from gi.repository import Gtk
+# Import gtk modules
+import gi
+gi.require_version("Gtk", "4.0")
+from gi.repository import Gtk
 
 # Import actions
 from .actions import StatusAction
@@ -25,7 +27,7 @@ class StatusPlugin(PluginBase):
             action_id_suffix = "StatusChecker",
             action_id = "com.bgrande.StatusPlugin::StatusChecker",
             action_name = "Status Checker",
-            #icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
+            icon=Gtk.Picture.new_for_filename(os.path.join(self.PATH, "assets", "icon.png")),
             action_support={
                 Input.Key: ActionInputSupport.SUPPORTED,
                 Input.Dial: ActionInputSupport.UNTESTED,
