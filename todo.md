@@ -7,6 +7,7 @@
 # 0.7.0
 + make thumbnail more pretty
 + add icon (choose something useful)
++ use icon for Plugin and Action
 
 # 0.6.0
 + reset state on_ready
