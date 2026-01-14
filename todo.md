@@ -6,9 +6,9 @@
 
 
 # 1.0.0
-- test Success
-- test Regex
-- fix website contains
++ test Success
++ test Regex
++ fix website contains
 + fix result length cutting
 + create PR for Plugin repository
   -> https://streamcontroller.core447.com/streamcontroller/docs/latest/plugin_dev/submitting/submitting/

@@ -155,7 +155,7 @@ class StatusAction(ActionBase):
                 result = result.decode('utf-8', errors='ignore')
 
             log.debug(f"status_code: {status_code}")
-            log.debug(f"result: {result}")
+            log.debug(f"success: {success}")
 
             self.evaluate_result(result, status_code, success)
             self.is_checking = False
