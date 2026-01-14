@@ -1,8 +1,7 @@
 # 1.0.0
-- create PR for Plugin repository
++ create PR for Plugin repository
   -> https://streamcontroller.core447.com/streamcontroller/docs/latest/plugin_dev/submitting/submitting/
-- test and fix longer running scripts/apps and result checking
-- more testing
++ test and fix longer running scripts/apps and result checking
 
 # 0.8.0
 + Deeper testing
