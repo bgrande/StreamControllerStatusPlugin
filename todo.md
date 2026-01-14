@@ -4,15 +4,12 @@
 - more explanations in settings
 - default symbol for button?
 
-# 1.0.2
+
+# 1.0.0
 - test Success
 - test Regex
 - fix website contains
-
-# 1.0.1
 + fix result length cutting
-
-# 1.0.0
 + create PR for Plugin repository
   -> https://streamcontroller.core447.com/streamcontroller/docs/latest/plugin_dev/submitting/submitting/
 + test and fix longer running scripts/apps and result checking
