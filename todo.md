@@ -1,3 +1,6 @@
+# 1.1.0
+- add support for making call timeout customizable
+
 # 1.0.0
 + create PR for Plugin repository
   -> https://streamcontroller.core447.com/streamcontroller/docs/latest/plugin_dev/submitting/submitting/
