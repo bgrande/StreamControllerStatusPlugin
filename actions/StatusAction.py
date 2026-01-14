@@ -16,12 +16,12 @@ from src.backend.PluginManager.PluginBase import PluginBase
 # Import gtk modules
 import gi
 
-RESULT_MAX_CHARS = 30
-
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio, Gdk
 
+CALL_TIMEOUT = 15 # in seconds
+RESULT_MAX_CHARS = 30
 NOMATCH_BG_COLOR = "nomatch_bg_color"
 MATCH_BG_COLOR = "match_bg_color"
 NOMATCH_TEXT_COLOR = "nomatch_text_color"
@@ -129,7 +129,7 @@ class StatusAction(ActionBase):
                     log.debug(f"Requesting URL: {target}")
                     request = urllib.request.Request(target, headers=headers)
 
-                    with urllib.request.urlopen(request, timeout=10) as response:
+                    with urllib.request.urlopen(request, timeout=CALL_TIMEOUT) as response:
                         status_code = response.getcode()
                         result = response.read()
                         success = True
@@ -142,7 +142,7 @@ class StatusAction(ActionBase):
                     result = str(e)
             else: # local script
                 try:
-                    process = subprocess.run(target, shell=True, capture_output=True, text=True, timeout=10)
+                    process = subprocess.run(target, shell=True, capture_output=True, text=True, timeout=CALL_TIMEOUT)
                     result = process.stdout.strip()
                     status_code = process.returncode
                     success = True
