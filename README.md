@@ -38,6 +38,7 @@ Expand these sections to define how the button should look when the condition is
 - **Error Background Color**: The button's background when the match was negative.
 - **Success Text Color**: The color of the label text when the match was positive.
 - **Error Text Color**: The color of the label text when the match was negative.
+- **Timeout**: There's currently a hardcoded call timeout of 15 seconds.
 
 ### Default Behavior
 - **Label Text**
