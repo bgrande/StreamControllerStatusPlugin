@@ -1,6 +1,13 @@
 # 1.1.0
 - add support for making call timeout customizable
 - add support for changing the button image based on result
+- more explanations in settings
+- default symbol for button?
+
+# 1.0.2
+- test Success
+- test Regex
+- fix website contains
 
 # 1.0.1
 + fix result length cutting

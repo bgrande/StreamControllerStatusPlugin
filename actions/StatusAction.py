@@ -146,8 +146,6 @@ class StatusAction(ActionBase):
                     result = process.stdout.strip()
                     status_code = process.returncode
                     success = True
-                    log.debug(f"Local script result: {result}")
-                    log.debug(f"status_code: {status_code}")
                 except Exception as e:
                     log.exception("Failed to run local script")
                     result = str(e)
@@ -155,6 +153,9 @@ class StatusAction(ActionBase):
             # Ensure result is a string
             if isinstance(result, bytes):
                 result = result.decode('utf-8', errors='ignore')
+
+            log.debug(f"status_code: {status_code}")
+            log.debug(f"result: {result}")
 
             self.evaluate_result(result, status_code, success)
             self.is_checking = False
