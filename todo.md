@@ -1,5 +1,9 @@
 # 1.1.0
 - add support for making call timeout customizable
+- add support for changing the button image based on result
+
+# 1.0.1
++ fix result length cutting
 
 # 1.0.0
 + create PR for Plugin repository
